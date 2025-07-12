@@ -22,35 +22,44 @@ screenGui.Parent = game:GetService("CoreGui") or game.Players.LocalPlayer:WaitFo
 -- Loading Screen
 local loadingFrame = Instance.new("Frame")
 loadingFrame.Name = "LoadingFrame"
-loadingFrame.Size = UDim2.new(1, 0, 1, 0)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+loadingFrame.Size = UDim2.new(0, 300, 0, 150)
+loadingFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 loadingFrame.BorderSizePixel = 0
 loadingFrame.ZIndex = 100
 loadingFrame.Parent = screenGui
 
-local logo = Instance.new("ImageLabel")
-logo.Name = "Logo"
-logo.Size = UDim2.new(0, 150, 0, 150)
-logo.Position = UDim2.new(0.5, -75, 0.4, -75)
-logo.BackgroundTransparency = 1
-logo.Image = "rbxassetid://1234567890" -- Replace with your logo image ID
-logo.Parent = loadingFrame
+local loadingCorner = Instance.new("UICorner")
+loadingCorner.CornerRadius = UDim.new(0, 6)
+loadingCorner.Parent = loadingFrame
 
-local scriptName = Instance.new("TextLabel")
-scriptName.Name = "ScriptName"
-scriptName.Size = UDim2.new(0, 300, 0, 40)
-scriptName.Position = UDim2.new(0.5, -150, 0.6, 0)
-scriptName.BackgroundTransparency = 1
-scriptName.Text = "Script Name"
-scriptName.TextColor3 = Color3.fromRGB(255, 255, 255)
-scriptName.Font = Enum.Font.GothamBold
-scriptName.TextSize = 24
-scriptName.Parent = loadingFrame
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, -20, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "Title Here"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.Parent = loadingFrame
+
+local status = Instance.new("TextLabel")
+status.Name = "Status"
+status.Size = UDim2.new(1, -20, 0, 20)
+status.Position = UDim2.new(0, 10, 0, 50)
+status.BackgroundTransparency = 1
+status.Text = "UI Initialization [ Downloading ]"
+status.TextColor3 = Color3.fromRGB(200, 200, 200)
+status.Font = Enum.Font.Gotham
+status.TextSize = 14
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.Parent = loadingFrame
 
 local progressBarBackground = Instance.new("Frame")
 progressBarBackground.Name = "ProgressBarBackground"
-progressBarBackground.Size = UDim2.new(0.4, 0, 0, 20)
-progressBarBackground.Position = UDim2.new(0.3, 0, 0.7, 0)
+progressBarBackground.Size = UDim2.new(1, -20, 0, 10)
+progressBarBackground.Position = UDim2.new(0, 10, 0, 80)
 progressBarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 progressBarBackground.BorderSizePixel = 0
 progressBarBackground.Parent = loadingFrame
@@ -64,13 +73,14 @@ progressBar.Parent = progressBarBackground
 
 local progressText = Instance.new("TextLabel")
 progressText.Name = "ProgressText"
-progressText.Size = UDim2.new(0.4, 0, 0, 20)
-progressText.Position = UDim2.new(0.3, 0, 0.75, 0)
+progressText.Size = UDim2.new(1, -20, 0, 20)
+progressText.Position = UDim2.new(0, 10, 0, 100)
 progressText.BackgroundTransparency = 1
 progressText.Text = "0%"
 progressText.TextColor3 = Color3.fromRGB(200, 200, 200)
 progressText.Font = Enum.Font.Gotham
-progressText.TextSize = 16
+progressText.TextSize = 14
+progressText.TextXAlignment = Enum.TextXAlignment.Right
 progressText.Parent = loadingFrame
 
 -- Main UI Frame
@@ -338,8 +348,8 @@ end
 function UI:CreateSector(tab, name, side)
     local sector = Instance.new("Frame")
     sector.Name = name .. "Sector"
-    sector.Size = UDim2.new(side == "left" and 0.48 or 0.48, 0, 0, 0)
-    sector.Position = UDim2.new(side == "left" and 0 or 0.52, 0, 0, 0)
+    sector.Size = UDim2.new(side == "right" and 0.48 or 0.48, 0, 0, 0)
+    sector.Position = UDim2.new(side == "right" and 0.52 or 0, 0, 0, 0)
     sector.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
     sector.BorderSizePixel = 0
     sector.AutomaticSize = Enum.AutomaticSize.Y
@@ -476,112 +486,6 @@ function UI:CreateToggle(parent, text, default, callback)
     }
 end
 
-function UI:CreateSlider(parent, text, min, max, default, callback)
-    local slider = Instance.new("Frame")
-    slider.Name = text .. "Slider"
-    slider.Size = UDim2.new(1, 0, 0, 50)
-    slider.BackgroundTransparency = 1
-    slider.Parent = parent
-    
-    local sliderText = Instance.new("TextLabel")
-    sliderText.Name = "Text"
-    sliderText.Size = UDim2.new(1, 0, 0, 20)
-    sliderText.BackgroundTransparency = 1
-    sliderText.Text = text .. ": " .. default
-    sliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    sliderText.Font = Enum.Font.Gotham
-    sliderText.TextSize = 14
-    sliderText.TextXAlignment = Enum.TextXAlignment.Left
-    sliderText.Parent = slider
-    
-    local sliderTrack = Instance.new("Frame")
-    sliderTrack.Name = "Track"
-    sliderTrack.Size = UDim2.new(1, 0, 0, 5)
-    sliderTrack.Position = UDim2.new(0, 0, 0, 25)
-    sliderTrack.BackgroundColor3 = Color3.fromRGB(70, 70, 80)
-    sliderTrack.Parent = slider
-    
-    local trackCorner = Instance.new("UICorner")
-    trackCorner.CornerRadius = UDim.new(0, 3)
-    trackCorner.Parent = sliderTrack
-    
-    local sliderFill = Instance.new("Frame")
-    sliderFill.Name = "Fill"
-    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    sliderFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
-    sliderFill.Parent = sliderTrack
-    
-    local fillCorner = Instance.new("UICorner")
-    fillCorner.CornerRadius = UDim.new(0, 3)
-    fillCorner.Parent = sliderFill
-    
-    local sliderThumb = Instance.new("Frame")
-    sliderThumb.Name = "Thumb"
-    sliderThumb.Size = UDim2.new(0, 15, 0, 15)
-    sliderThumb.Position = UDim2.new((default - min) / (max - min), -7.5, 0.5, -7.5)
-    sliderThumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    sliderThumb.Parent = sliderTrack
-    
-    local thumbCorner = Instance.new("UICorner")
-    thumbCorner.CornerRadius = UDim.new(0, 7.5)
-    thumbCorner.Parent = sliderThumb
-    
-    local dragging = false
-    
-    local function updateValue(input)
-        local x = (input.Position.X - sliderTrack.AbsolutePosition.X) / sliderTrack.AbsoluteSize.X
-        x = math.clamp(x, 0, 1)
-        local value = math.floor(min + (max - min) * x)
-        
-        sliderFill.Size = UDim2.new(x, 0, 1, 0)
-        sliderThumb.Position = UDim2.new(x, -7.5, 0.5, -7.5)
-        sliderText.Text = text .. ": " .. value
-        
-        if callback then
-            callback(value)
-        end
-    end
-    
-    sliderThumb.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-        end
-    end)
-    
-    sliderThumb.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    sliderTrack.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            updateValue(input)
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            updateValue(input)
-        end
-    end)
-    
-    return {
-        Set = function(value)
-            value = math.clamp(value, min, max)
-            local x = (value - min) / (max - min)
-            
-            sliderFill.Size = UDim2.new(x, 0, 1, 0)
-            sliderThumb.Position = UDim2.new(x, -7.5, 0.5, -7.5)
-            sliderText.Text = text .. ": " .. value
-        end,
-        Get = function()
-            return tonumber(string.match(sliderText.Text, "%d+"))
-        end
-    }
-end
-
 function UI:CreateDropdown(parent, text, options, default, callback, multiSelect)
     local dropdown = Instance.new("Frame")
     dropdown.Name = text .. "Dropdown"
@@ -614,7 +518,7 @@ function UI:CreateDropdown(parent, text, options, default, callback, multiSelect
     dropdownArrow.Size = UDim2.new(0, 15, 0, 15)
     dropdownArrow.Position = UDim2.new(1, -20, 0.5, -7.5)
     dropdownArrow.BackgroundTransparency = 1
-    dropdownArrow.Image = "rbxassetid://6031090990" -- Down arrow icon
+    dropdownArrow.Image = "rbxassetid://6031090990"
     dropdownArrow.Parent = dropdownButton
     
     local dropdownOptions = Instance.new("Frame")
@@ -717,7 +621,7 @@ function UI:CreateDropdown(parent, text, options, default, callback, multiSelect
         optionButton.Parent = dropdownOptions
     end
     
-    dropdownOptions.Size = UDim2.new(1, 0, 0, #options * 27 + 4)
+    dropdownOptions.AutomaticSize = Enum.AutomaticSize.Y
     
     local isOpen = false
     
