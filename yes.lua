@@ -486,6 +486,111 @@ function UI:CreateToggle(parent, text, default, callback)
     }
 end
 
+function UI:CreateSlider(parent, text, min, max, default, callback)
+    local slider = Instance.new("Frame")
+    slider.Name = text .. "Slider"
+    slider.Size = UDim2.new(1, 0, 0, 50)
+    slider.BackgroundTransparency = 1
+    slider.Parent = parent
+    
+    local sliderText = Instance.new("TextLabel")
+    sliderText.Name = "Text"
+    sliderText.Size = UDim2.new(1, 0, 0, 20)
+    sliderText.BackgroundTransparency = 1
+    sliderText.Text = text .. ": " .. default
+    sliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sliderText.Font = Enum.Font.Gotham
+    sliderText.TextSize = 14
+    sliderText.TextXAlignment = Enum.TextXAlignment.Left
+    sliderText.Parent = slider
+    
+    local sliderTrack = Instance.new("Frame")
+    sliderTrack.Name = "Track"
+    sliderTrack.Size = UDim2.new(1, 0, 0, 5)
+    sliderTrack.Position = UDim2.new(0, 0, 0, 25)
+    sliderTrack.BackgroundColor3 = Color3.fromRGB(70, 70, 80)
+    sliderTrack.Parent = slider
+    
+    local trackCorner = Instance.new("UICorner")
+    trackCorner.CornerRadius = UDim.new(0, 3)
+    trackCorner.Parent = sliderTrack
+    
+    local sliderFill = Instance.new("Frame")
+    sliderFill.Name = "Fill"
+    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    sliderFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+    sliderFill.Parent = sliderTrack
+    
+    local fillCorner = Instance.new("UICorner")
+    fillCorner.CornerRadius = UDim.new(0, 3)
+    fillCorner.Parent = sliderFill
+    
+    local sliderThumb = Instance.new("Frame")
+    sliderThumb.Name = "Thumb"
+    sliderThumb.Size = UDim2.new(0, 15, 0, 15)
+    sliderThumb.Position = UDim2.new((default - min) / (max - min), -7.5, 0.5, -7.5)
+    sliderThumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    sliderThumb.Parent = sliderTrack
+    
+    local thumbCorner = Instance.new("UICorner")
+    thumbCorner.CornerRadius = UDim.new(0, 7.5)
+    thumbCorner.Parent = sliderThumb
+    
+    local dragging = false
+    
+    local function updateValue(input)
+        local x = (input.Position.X - sliderTrack.AbsolutePosition.X) / sliderTrack.AbsoluteSize.X
+        x = math.clamp(x, 0, 1)
+        local value = math.floor(min + (max - min) * x)
+        
+        sliderFill.Size = UDim2.new(x, 0, 1, 0)
+        sliderThumb.Position = UDim2.new(x, -7.5, 0.5, -7.5)
+        sliderText.Text = text .. ": " .. value
+        
+        if callback then
+            callback(value)
+        end
+    end
+    
+    sliderThumb.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+        end
+    end)
+    
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            updateValue(input)
+        end
+    end)
+    
+    sliderTrack.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            updateValue(input)
+        end
+    end)
+    
+    return {
+        Set = function(value)
+            value = math.clamp(value, min, max)
+            local x = (value - min) / (max - min)
+            
+            sliderFill.Size = UDim2.new(x, 0, 1, 0)
+            sliderThumb.Position = UDim2.new(x, -7.5, 0.5, -7.5)
+            sliderText.Text = text .. ": " .. value
+        end,
+        Get = function()
+            return tonumber(string.match(sliderText.Text, "%d+"))
+        end
+    }
+end
+
 function UI:CreateDropdown(parent, text, options, default, callback, multiSelect)
     local dropdown = Instance.new("Frame")
     dropdown.Name = text .. "Dropdown"
